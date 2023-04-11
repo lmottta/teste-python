@@ -1,49 +1,33 @@
-# Teste Técnico Desenvolvedor(a) Python
+```
+# magpy-nc
 
-Neste repositório você encontra o enunciado do teste técnico.
-Você provavelmente chegou aqui através da indicação de alguma pessoa da empresa após passar pelas **outras etapas**
-do processo seletivo. Se este não for o seu caso e mesmo assim você implementar
-alguma solução para este exercício ele **não** será avaliado.
+magpy-nc é uma API REST desenvolvida com Flask que gerencia uma coleção de projetos. Cada projeto tem um nome e uma lista de pacotes. Cada pacote tem um nome e uma versão.
 
-> Você _pode_ usar o problema descrito aqui para exercitar suas habilidades de
-> desenvolvimento, mas a sua solução será avaliada por alguém da Neocredit
-> **apenas se** você estiver no processo seletivo.
+## Instalação
 
-## O problema
-
-A equipe de desenvolvimento da Neocredit se orgulha de 
-usar as tecnologias mais recentes e modernas. Essa regra também se aplica aos
-projetos desenvolvidos em Python pela equipe.
-
-Para garantir que todos seus projetos em Python estão usando as últimas versões
-disponíves dos pacotes, a equipe pensou em criar uma ferramenta batizada de 
-MagPy. A ferramenta recebe um nome de projeto, uma lista de pacotes e devolve a 
-última versão de cada pacote.
-
-Um dos integrantes apontou que a 
-[API pública do PyPI](https://warehouse.readthedocs.io/api-reference/json.html)
-poderia ser usada para esse fim.
-
-## A Solução
-
-Você deve desenvolver a MagPy, uma API REST que gerencia uma coleção de 
-projetos. Cada projeto tem um nome e uma lista de pacotes. Cada pacote tem um 
-nome e uma versão.
-
-O cadastro de um projeto recebe o nome e a lista de pacotes. Cada pacote da 
-lista precisa obrigatoriamente especificar um nome, mas a versão é opcional.
-
-Sua API deve validar o projeto cadastrado: todos os pacotes informados devem
-estar cadastrados no [PyPI](https://pypi.org/). Portanto você deve verificar o
-nome e a versão do pacote.
-
-Quando o pacote vem apenas com o nome, sua API deve assumir que é preciso usar
-a última versão publicada no [PyPI](https://pypi.org/).
-
-Abaixo, alguns exemplos de chamadas que serão feitas nessa API:
+Para instalar as dependências necessárias para executar este projeto, execute o seguinte comando em seu terminal:
 
 ```
-POST /api/projects
+pip install flask requests
+```
+
+## Uso
+
+Para executar a API localmente, execute o seguinte comando em seu terminal:
+
+```
+python app.py
+```
+
+Isso iniciará a API na porta 5000. Você pode acessar a API em `http://localhost:5000`.
+
+A API tem as seguintes rotas disponíveis:
+
+### POST /api/projects
+
+Cria um novo projeto.
+
+```json
 {
     "name": "titan",
     "packages": [
@@ -52,70 +36,59 @@ POST /api/projects
     ]
 }
 ```
-O código HTTP de retorno deve ser 201 e o corpo esperado na resposta é:
+
+Onde `name` é o nome do projeto e `packages` é uma lista de pacotes. Cada pacote deve ter um `name` e pode opcionalmente ter uma `version`. Se nenhuma versão for especificada para um pacote, a API usará a versão mais recente do pacote disponível no PyPI.
+
+Se a solicitação for bem-sucedida, a API retornará uma resposta com o código de status HTTP 201 e os dados do projeto criado no corpo da resposta.
+
+Se algum dos pacotes especificados não existir ou se alguma das versões especificadas for inválida, a API retornará um erro com o código de status HTTP 400.
+
+### GET /api/projects/<project_name>
+
+Recupera os dados de um projeto previamente criado. Substitua `<project_name>` pelo nome do projeto que deseja recuperar.
+
+Se o projeto existir, a API retornará uma resposta com o código de status HTTP 200 e os dados do projeto no corpo da resposta.
+
+Se o projeto não existir, a API retornará um erro com o código de status HTTP 404.
+
+### DELETE /api/projects/<project_name>
+
+Exclui um projeto previamente criado. Substitua `<project_name>` pelo nome do projeto que deseja excluir.
+
+Se o projeto existir, a API excluirá o projeto e retornará uma resposta vazia com o código de status HTTP 204.
+
+Se o projeto não existir, a API retornará um erro com o código de status HTTP 404.
 ```
-{
-    "name": "titan",
-    "packages": [
-        {"name": "Django", "version": "3.2.5"},  // Usou a versão mais recente
-        {"name": "graphene", "version": "2.0"}   // Manteve a versão especificada
-    ]
-}
 ```
+### Testes
+Para executar a rotina de testes para este projeto, execute o seguinte comando em seu terminal:
 
-Se um dos pacotes informados não existir, ou uma das versões especificadas for
-inválida, um erro deve ser retornado.
+python -m unittest
+Isso executará todos os testes definidos na classe TestApp e informará se algum dos testes falhar. Se todos os testes passarem, você verá uma saída semelhante a esta:
 
-Para uma chamada semelhante ao exemplo abaixo:
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.015s
+
+OK
+Isso indica que todos os testes passaram com sucesso.
+
+Se algum dos testes falhar, você verá uma saída semelhante a esta:
+
+..F..
+======================================================================
+FAIL: test_create_project_invalid_package (__main__.TestApp)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "test_app.py", line 27, in test_create_project_invalid_package
+    self.assertEqual(response.status_code, 400)
+AssertionError: 201 != 400
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.017s
+
+FAILED (failures=1)
+Isso indica que um dos testes falhou e fornece informações sobre qual teste falhou e por quê.
+
+
 ```
-POST /api/projects
-{
-    "name": "titan",
-    "packages": [
-        {"name": "pypypypypypypypypypypy"},
-        {"name": "graphene", "version": "1900"}
-    ]
-}
-```
-O código HTTP de retorno deve ser 400 e o corpo esperado na resposta é:
-```
-{
-    "error": "One or more packages doesn't exist"
-}
-```
-
-Também deve ser possível visitar projetos previamente cadastrados, usando o
-nome na URL:
-```
-GET /api/projects/titan
-{
-    "name": "titan",
-    "packages": [
-        {"name": "Django", "version": "3.2.5"},
-        {"name": "graphene", "version": "2.0"}
-    ]
-}
-```
-
-E deletar projetos pelo nome:
-```
-DELETE /api/projects/titan
-```
-
-| ⚠️ | Sua solução deve usar a [API pública do PyPI](https://warehouse.readthedocs.io/api-reference/json.html). Não use outro caminho pra buscar as informações necessárias |
-| --- | --- |
-
-
-## Solução
-
-Você pode usar seu framework web favorito desde que sua solução use Python (FastAPI, Flask, Django...). 
-Se você nunca mexeu com nenhuma dessas opções, a recomendação é usar o FastAPI.
-
-Para implementar sua solução, você precisará:
-
-1. Fazer um **Fork** deste repositório.
-2. Clonar e implementar sua solução neste repositório.
-3. Publicar o código da solução no github.
-4. Enviar para o time da Neocredit o link da solução publicada para que seja avaliada.
-
-**Boa sorte!**
