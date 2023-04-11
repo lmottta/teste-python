@@ -1,7 +1,10 @@
+# Acompanhe a documentação de testes no postman, foi utilizado ngrok para teste remoto 
+https://documenter.getpostman.com/view/26803888/2s93Xu2RYf
 ```
 # magpy-nc
 
-magpy-nc é uma API REST desenvolvida com Flask que gerencia uma coleção de projetos. Cada projeto tem um nome e uma lista de pacotes. Cada pacote tem um nome e uma versão.
+magpy-nc é uma API REST desenvolvida com Flask que gerencia uma coleção de projetos. 
+Cada projeto tem um nome e uma lista de pacotes. Cada pacote tem um nome e uma versão.
 
 ## Instalação
 
@@ -37,7 +40,9 @@ Cria um novo projeto.
 }
 ```
 
-Onde `name` é o nome do projeto e `packages` é uma lista de pacotes. Cada pacote deve ter um `name` e pode opcionalmente ter uma `version`. Se nenhuma versão for especificada para um pacote, a API usará a versão mais recente do pacote disponível no PyPI.
+Onde `name` é o nome do projeto e `packages` é uma lista de pacotes. 
+Cada pacote deve ter um `name` e pode opcionalmente ter uma `version`. 
+Se nenhuma versão for especificada para um pacote, a API usará a versão mais recente do pacote disponível no PyPI.
 
 Se a solicitação for bem-sucedida, a API retornará uma resposta com o código de status HTTP 201 e os dados do projeto criado no corpo da resposta.
 
@@ -64,7 +69,8 @@ Se o projeto não existir, a API retornará um erro com o código de status HTTP
 Para executar a rotina de testes para este projeto, execute o seguinte comando em seu terminal:
 
 python -m unittest
-Isso executará todos os testes definidos na classe TestApp e informará se algum dos testes falhar. Se todos os testes passarem, você verá uma saída semelhante a esta:
+Isso executará todos os testes definidos na classe TestApp e informará se algum dos testes falhar. 
+Se todos os testes passarem, você verá uma saída semelhante a esta:
 
 .....
 ----------------------------------------------------------------------
